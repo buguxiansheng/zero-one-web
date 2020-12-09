@@ -82,7 +82,7 @@ export default {
                     sessionStorage.setItem("token", res.data.data);
                     sessionStorage.setItem("username", this.ruleForm.username);
                     this.$router.replace({
-                    path: "/home",
+                    path: "/main",
                     });
                 }else{
                     alert(res.data.msg)
