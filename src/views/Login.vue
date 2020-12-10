@@ -12,19 +12,19 @@
         label-width="100px"
         class="demo-ruleForm"
     >
-      <el-form-item prop="username">
+      <el-form-item prop="userName">
         <el-input
           style="margin-left: 0px"
           placeholder="用户名"
-          v-model="ruleForm.username"
+          v-model="ruleForm.userName"
           autocomplete="off"
         ></el-input>
       </el-form-item>
-      <el-form-item prop="password">
+      <el-form-item prop="passWord">
         <el-input
           placeholder="密码"
-          type="password"
-          v-model="ruleForm.password"
+          type="passWord"
+          v-model="ruleForm.passWord"
           autocomplete="off"
         ></el-input>
       </el-form-item>
@@ -58,12 +58,12 @@ export default {
     };
     return {
       ruleForm: {
-        username: "",
-        password: "",
+        userName: "",
+        passWord: "",
       },
       rules: {
-        username: [{ validator: validateUser, trigger: "blur" }],
-        password: [{ validator: validatePass, trigger: "blur" }],
+        userName: [{ validator: validateUser, trigger: "blur" }],
+        passWord: [{ validator: validatePass, trigger: "blur" }],
       },
       loading:false
     };
@@ -75,12 +75,14 @@ export default {
             this.loading = true
             this.$axios
                 .post("login", this.ruleForm)
-                .then((res) => {
+                .then( res => {
                 this.loading = false
                 if (res.data.msg ==="登录成功") {
-                    alert(res.data.msg)
+                    this.$store.commit("changeMenuList",res.data.data.menuList)
+                    console.log(res.data.data.menuList)
                     sessionStorage.setItem("token", res.data.data);
-                    sessionStorage.setItem("username", this.ruleForm.username);
+                    sessionStorage.setItem("userName", this.ruleForm.userName);
+                    alert(res.data.msg)
                     this.$router.replace({
                     path: "/main",
                     });

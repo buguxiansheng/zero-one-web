@@ -9,15 +9,15 @@
     </el-container>
     <el-dialog :visible.sync="dialogFormVisible">
       <el-form v-model="modifyUserForm">
-        <el-form-item label="username">
+        <el-form-item label="userName">
           <el-input
-            v-model="modifyUserForm.username"
+            v-model="modifyUserForm.userName"
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="password">
+        <el-form-item label="passWord">
           <el-input
-            v-model="modifyUserForm.password"
+            v-model="modifyUserForm.passWord"
             :type="visible"
             autocomplete="off"
           ></el-input>
@@ -34,6 +34,10 @@
 import Menu from "../components/Menu";
 import Top from "../components/Top";
 export default {
+
+  created(){
+    this.menuList = this.$store.state.menuList
+  },
   components: {
     Menu,
     Top
@@ -42,52 +46,13 @@ export default {
     return {
       input: "",
       modifyUserForm: {
-        username: "",
-        password: "",
+        userName: "",
+        passWord: "",
       },
       dialogFormVisible: false,
-      visible: "password",
+      visible: "passWord",
       isCollapse: false,
-      menuList: [
-        {
-          path: "/privilige_manage",
-          name: "权限管理",
-          child: [
-            {
-              path: "/user_manage",
-              name: "用户管理",
-            },
-            {
-              path: "/group_manage",
-              name: "组织架构",
-            },
-            {
-              path: "/model_manage",
-              name: "角色管理",
-            },
-            {
-              path: "/model_group_manage",
-              name: "角色组管理",
-            },
-            {
-              path: "order_manage",
-              name: "菜单管理",
-            },
-            {
-              path: "/data_manage",
-              name: "数据管理",
-            },
-          ],
-        },
-        {
-          path: "/data_manage",
-          name: "数据管理", 
-        },
-        {
-          path: "/data_manage",
-          name: "数据管理", 
-        },
-
+      menuList: [   
       ],
     };
   }

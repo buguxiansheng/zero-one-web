@@ -22,19 +22,20 @@
             <el-dropdown-item command="登出">登出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <span class="el-dropdown-link">{{ userName }}</span>
       </div>
     </el-header>
     <el-dialog :visible.sync="dialogFormVisible">
       <el-form v-model="modifyUserForm">
-        <el-form-item label="username">
+        <el-form-item label="userName">
           <el-input
-            v-model="modifyUserForm.username"
+            v-model="modifyUserForm.userName"
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="password">
+        <el-form-item label="passWord">
           <el-input
-            v-model="modifyUserForm.password"
+            v-model="modifyUserForm.passWord"
             :type="visible"
             autocomplete="off"
           ></el-input>
@@ -54,21 +55,30 @@ export default {
     return {
       input: "",
       modifyUserForm: {
-        username: "",
-        password: "",
+        userName: "",
+        passWord: "",
       },
       dialogFormVisible: false,
-      visible: "password",
+      visible: "passWord",
+      userName: ""
     };
   },
+  created(){
+    this.userName = sessionStorage.getItem("userName");
+  },
+//   watch: {
+//       userName(val){
+//           this.userName = val
+//       },
+//       immediate: true
+//   },
   methods: {
     initModifyUserForm() {
-      var username = sessionStorage.getItem("username");
-      console.log(username);
+      var userName = sessionStorage.getItem("userName");
       this.$axios({
         url: "getUserList",
         params: {
-          username: username,
+          userName: userName,
         },
         method: "get",
       })
@@ -86,14 +96,16 @@ export default {
     confirm() {
       this.$axios
         .post("modifyUserInfo", {
-          usernameNew: this.modifyUserForm.username,
-          passwordNew: this.modifyUserForm.password,
-          usernameOld: sessionStorage.getItem("username"),
+          userNameNew: this.modifyUserForm.userName,
+          passWordNew: this.modifyUserForm.passWord,
+          userNameOld: sessionStorage.getItem("userName"),
         })
         .then((res) => {
           // this.modifyUserForm = res.data.data
-          sessionStorage.setItem("username", this.modifyUserForm.username);
-          alert(res.data.msg);
+          sessionStorage.setItem("userName", this.modifyUserForm.userName);
+          
+          this.userName = this.modifyUserForm.userName
+          console.log(this.userName)
           this.dialogFormVisible = false;
         })
         .catch();

@@ -9,18 +9,18 @@
     >
       <template v-for="item in menuList">
         <el-submenu
-          v-if="item.child && item.child.length > 0"
-          :key="item.path"
-          :index="item.path"
+          v-if="item.childMenus && item.childMenus.length > 0"
+          :key="item.url"
+          :index="item.url === null ? 'null': item.url"
         >
           <template slot="title">
             <i class="el-icon-location"></i>
-            <span>{{ item.name }}</span>
+            <span>{{ item.menuName }}</span>
           </template>
-          <Menu :menuList="item.child" />
+          <Menu :menuList="item.childMenus" />
         </el-submenu>
-        <el-menu-item v-else :key="item.path" :index="item.path">{{
-          item.name
+        <el-menu-item v-else :key="item.url" :index="item.url === null ? 'null': item.url">{{
+          item.menuName
         }}</el-menu-item>
       </template>
     </el-menu>
@@ -35,7 +35,12 @@ export default {
     Menu
   },
   props:{
-    menuList: []
+    menuList: {}
+  },
+  data(){
+    return{
+      isCollapse: false
+    }
   },
   methods: {
     handleOpen(key, keyPath) {
