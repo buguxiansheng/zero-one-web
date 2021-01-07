@@ -1,16 +1,16 @@
 <template>
   <div id="login">
     <el-form
-        v-loading="loading"
-        element-loading-text="进入中"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)"
-        :model="ruleForm"
-        status-icon
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
+      v-loading="loading"
+      element-loading-text="进入中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
+      :model="ruleForm"
+      status-icon
+      :rules="rules"
+      ref="ruleForm"
+      label-width="100px"
+      class="demo-ruleForm"
     >
       <el-form-item prop="userName">
         <el-input
@@ -40,6 +40,7 @@
 
 <script>
 /* eslint-disable */
+import { routes }  from '@/router'
 export default {
   data() {
     var validateUser = (rule, value, callback) => {
@@ -65,44 +66,89 @@ export default {
         userName: [{ validator: validateUser, trigger: "blur" }],
         passWord: [{ validator: validatePass, trigger: "blur" }],
       },
-      loading:false
+      loading: false,
+      dynamicRoute: [],
+      menuList: [],
     };
   },
   methods: {
     submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
-            this.loading = true
-            this.$axios
-                .post("login", this.ruleForm)
-                .then( res => {
-                this.loading = false
-                if (res.data.msg ==="登录成功") {
-                    this.$store.commit("changeMenuList",res.data.data.menuList)
-                    console.log(res.data.data.menuList)
-                    sessionStorage.setItem("token", res.data.data);
-                    sessionStorage.setItem("userName", this.ruleForm.userName);
-                    alert(res.data.msg)
-                    this.$router.replace({
+          this.loading = true;
+          this.$axios
+            .post("login", this.ruleForm)
+            .then((res) => {
+              this.loading = false;
+              if (res.data.msg === "登录成功") {
+                this.menuList = res.data.data.menuList;
+                this.$store.commit("changeMenuList", res.data.data.menuList);
+
+                sessionStorage.setItem(
+                  "menuList",
+                  JSON.stringify(res.data.data.menuList)
+                );
+
+                sessionStorage.setItem("token", res.data.data.token);
+                sessionStorage.setItem("userName", this.ruleForm.userName);
+                // 动态路由添加
+                this.formateRoutes(this.menuList);
+                console.log(this.dynamicRoute);
+                sessionStorage.setItem(
+                  "asideList",
+                  JSON.stringify(this.dynamicRoute)
+                );
+                console.log(this.dynamicRoute)
+                this.$router.addRoutes([
+                  {
+                    name: "Main",
                     path: "/main",
-                    });
-                }else{
-                    alert(res.data.msg)
-                }
+                    component: () =>
+                      import(
+                        /* webpackChunkName: "about" */ "../views/Main.vue"
+                      ),
+                    children: this.dynamicRoute,
+                  },
+                ])
+                this.$router.replace({
+                  path: "/main",
                 })
-                .catch();
+                alert(res.data.msg)
+              } else {
+                alert(res.data.msg)
+              }
+            })
+            .catch();
         } else {
-          alert("用户名或密码不能为空");
+          alert("用户名或密码不能为空")
         }
       });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
+    formateRoutes(menuList) {
+      menuList.forEach((item) => {
+        //不存在  或者长度为 0 
+        if (!item.childMenus || item.childMenus.length === 0) {
+          var path = item.path;
+          let route = {
+            path: item.path,
+            name: item.path,
+            component: () =>
+              // 动态导入  截取字符串的一部分 给出View名
+              import(`@/views/modules/sys${path}.vue`),
+          };
+          this.dynamicRoute.push(route);
+        } else {
+          this.formateRoutes(item.childMenus);
+        }
+      });
+    },
   },
 };
 </script>
-<style >
+<style>
 #login {
   width: 350px;
   height: 250px;

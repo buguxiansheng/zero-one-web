@@ -1,11 +1,17 @@
 <template>
   <el-container style="height: 100%">
-    <Menu :menuList="menuList"/>
+    <!-- <Menu v-for="item in menuList" :item="item" :key="item.path"/> -->
+
+    <el-menu router>
+      <Menu :menuList="menuList" />
+    </el-menu>
     <el-container>
       <el-header>
-        <Top/>
+        <Top />
       </el-header>
-      <el-main> <router-view /> </el-main>
+      <el-main> 
+        <router-view /> 
+      </el-main>
     </el-container>
     <el-dialog :visible.sync="dialogFormVisible">
       <el-form v-model="modifyUserForm">
@@ -34,15 +40,14 @@
 import Menu from "../components/Menu";
 import Top from "../components/Top";
 export default {
-
-  created(){
-    this.menuList = this.$store.state.menuList
+  created() {
+    this.menuList = JSON.parse(sessionStorage.getItem("menuList"));
   },
   components: {
     Menu,
-    Top
+    Top,
   },
-   data() {
+  data() {
     return {
       input: "",
       modifyUserForm: {
@@ -52,10 +57,11 @@ export default {
       dialogFormVisible: false,
       visible: "passWord",
       isCollapse: false,
-      menuList: [   
-      ],
+      menuList: [],
     };
-  }
+  },
+  methods: {},
+  // 监控路由的变化
 };
 </script>
 
@@ -80,20 +86,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-}
-
-.el-aside {
-  background-color: #d3dce6;
-  color: #333;
-  text-align: center;
-  line-height: 200px;
-}
-
-.el-main {
-  background-color: #e9eef3;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
 }
 
 body > .el-container {

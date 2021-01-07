@@ -2,12 +2,27 @@
   <el-container>
     <el-header>
       <div id="left">
-        <el-input v-model="input" placeholder="请输入内容"></el-input>
+        <el-input v-model="input" :placeholder="$t('info')"></el-input>
         <el-button type="primary" icon="el-icon-search" style="margin: 9px"
           >搜索</el-button
         >
       </div>
       <div id="right">
+
+
+        <el-dropdown @command="languange">
+          <span class="el-dropdown-link">
+            {{$t('lan')}}<i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="a">简体中文</el-dropdown-item>
+            <el-dropdown-item command="b">繁体中文</el-dropdown-item>
+            <el-dropdown-item command="c">英文</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+
+
+
         <el-dropdown
           trigger="click"
           @command="handleCommand"
@@ -60,18 +75,18 @@ export default {
       },
       dialogFormVisible: false,
       visible: "passWord",
-      userName: ""
+      userName: "",
     };
   },
-  created(){
+  created() {
     this.userName = sessionStorage.getItem("userName");
   },
-//   watch: {
-//       userName(val){
-//           this.userName = val
-//       },
-//       immediate: true
-//   },
+  //   watch: {
+  //       userName(val){
+  //           this.userName = val
+  //       },
+  //       immediate: true
+  //   },
   methods: {
     initModifyUserForm() {
       var userName = sessionStorage.getItem("userName");
@@ -82,9 +97,9 @@ export default {
         },
         method: "get",
       })
-        .then( res => {
+        .then((res) => {
           console.log(res.data);
-          this.modifyUserForm = res.data.data[0];
+          this.modifyUserForm = res.data.data;
         })
         .catch();
     },
@@ -101,11 +116,8 @@ export default {
           userNameOld: sessionStorage.getItem("userName"),
         })
         .then((res) => {
-          // this.modifyUserForm = res.data.data
           sessionStorage.setItem("userName", this.modifyUserForm.userName);
-          
-          this.userName = this.modifyUserForm.userName
-          console.log(this.userName)
+          this.userName = this.modifyUserForm.userName;
           this.dialogFormVisible = false;
         })
         .catch();
@@ -123,9 +135,19 @@ export default {
         this.initModifyUserForm();
       }
     },
+    languange(command) {
+      if (command === "a") {
+        this.$i18n.locale = "zh-CN";
+      }
+      if (command === "b") {
+        this.$i18n.locale = "zh-TW";
+      }
+      if (command === "c") {
+        this.$i18n.locale = "en-US";
+      }
+    },
   },
-}
+};
 </script>
 
-<style>
-</style>
+<style></style>
